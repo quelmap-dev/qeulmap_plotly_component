@@ -37,6 +37,17 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         'path': 'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'
     };
 
+    const getTranslate =(el) => {
+  const style = getComputedStyle(el);
+  const matrix = new DOMMatrix(style.transform);
+
+  return {
+    x: matrix.m41,
+    y: matrix.m42,
+    z: matrix.m43
+  };
+}
+
     const internalConfig = {
         displaylogo: false,
         responsive: true,
@@ -258,6 +269,16 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
 
                             if (coords) {
                                 baseCoords = coords;
+                                // まだ0,0にいるなら、duaration 0で一旦移動させる
+                                if (getTranslate(tooltip).x === 0 && getTranslate(tooltip).y === 0) {
+                                    tooltip.style.transition = "none";
+                                    tooltip.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
+                                    // 次のフレームで通常のトランジションに戻す
+                                    requestAnimationFrame(() => {
+                                        tooltip.style.transition = "";
+                                    });
+                                }
+
                                 if (is3D) {
                                     tooltip.style.transform = `translate(calc(${coords.x}px + 50px), calc(${coords.y}px + 15px - 50%)`;
                                 } else {
