@@ -3,9 +3,9 @@
  * ============================================ */
 
 /* Dark Mode */
-/* .plot-container {
-	filter: invert(75%) hue-rotate(180deg);
-} */
+.dark .plot-container {
+	filter: invert(85%) hue-rotate(180deg);
+}
 
 .js-plotly-plot .plotly g.hoverlayer {
     display: none !important;
@@ -24,14 +24,32 @@
 
 .js-plotly-plot .plotly .custom-tooltip {
     position: absolute;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    border-radius: 0.25rem;
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-radius: 0.5rem;
     opacity: 0;
     pointer-events: none;
     transition: transform 0.3s, opacity 0.1s;
     transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
     overflow-wrap: normal !important;
-    padding: 10px 14px;
+    padding: 10px 14px 10px 25px;
+    color: black;
+    background-color: #f7f7f7;
+}
+
+.dark .js-plotly-plot .plotly .custom-tooltip {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+
+.js-plotly-plot .plotly .custom-tooltip::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 10px;
+    width: 7px;
+    height: calc(100% - 20px);
+    background: var(--tooltip-accent);
+    border-radius: 999px;
 }
 
 .js-plotly-plot .plotly .modebar-container {

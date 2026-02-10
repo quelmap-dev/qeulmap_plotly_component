@@ -238,7 +238,6 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                             const textEls = node.querySelectorAll("text");
                             let text = "";
                             let fontSize = null;
-                            let color = null;
                             
                             textEls.forEach((textEl) => {
                                 const tspans = textEl.childNodes;
@@ -252,9 +251,9 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                                 fontSize = textEl
                                     ? parseFloat(window.getComputedStyle(textEl).fontSize)
                                     : null;
-                                color = textEl
-                                    ? window.getComputedStyle(textEl).fill
-                                    : null;
+                                // color = textEl
+                                //     ? window.getComputedStyle(textEl).fill
+                                //     : null;
                             });
 
                             if (coords) {
@@ -267,11 +266,17 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                                 tooltip.style.fontSize = fontSize
                                     ? `${fontSize}px`
                                     : "inherit";
-                                tooltip.style.color = color || "inherit";
+                                // tooltip.style.color = color || "inherit";
                                 tooltip.innerHTML = text || "";
-                                tooltip.style.backgroundColor = fill
-                                    ? `${fill}`
-                                    : "rgba(255, 255, 255, 0.8)";
+                                const gradient = `
+                                    linear-gradient(
+                                    to bottom,
+                                    rgba(0,0,0,0) 0%,
+                                    rgba(0,0,0,0.15) 100%
+                                    ),
+                                    ${fill}
+                                `;
+                                tooltip.style.setProperty("--tooltip-accent", gradient);
                                 tooltip.style.opacity = "1";
                                 
                                 if (!is3D) {
