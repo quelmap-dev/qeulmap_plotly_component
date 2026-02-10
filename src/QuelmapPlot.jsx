@@ -343,13 +343,14 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     };
 
     return (
-        <Plot
-            key={plotKey}
-            layout={internalLayout}
-            config={internalConfig}
-            onInitialized={handleInitialized}
-            onUpdate={handleUpdate}
-            {...props}
-        />
+            <Plot
+                key={plotKey}
+                layout={internalLayout}
+                config={internalConfig}
+                className="quelmap-plot-wrapper"
+                onInitialized={handleInitialized}
+                onUpdate={handleUpdate}
+                {...props}
+            />
     );
 }

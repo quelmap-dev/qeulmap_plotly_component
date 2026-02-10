@@ -3,26 +3,27 @@
  * ============================================ */
 
 /* Dark Mode */
-.dark .plot-container {
+.quelmap-plot-wrapper .dark .plot-container,
+.dark .quelmap-plot-wrapper .plot-container {
 	filter: invert(85%) hue-rotate(180deg);
 }
 
-.js-plotly-plot .plotly g.hoverlayer {
+.quelmap-plot-wrapper.js-plotly-plot .plotly g.hoverlayer {
     display: none !important;
 }
 
-.js-plotly-plot .plotly .gl-container #scene svg g.hovertext {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .gl-container #scene svg g.hovertext {
     display: none !important;
 }
 
-.js-plotly-plot .plotly .gl-container #scene {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .gl-container #scene {
     width: 100% !important;
     height: 100% !important;
     left: 0 !important;
     top: 0 !important;
 }
 
-.js-plotly-plot .plotly .custom-tooltip {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip {
     position: absolute;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     border-radius: 0.5rem;
@@ -36,12 +37,12 @@
     background-color: #f7f7f7;
 }
 
-.dark .js-plotly-plot .plotly .custom-tooltip {
+.dark .quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 
-.js-plotly-plot .plotly .custom-tooltip::before {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip::before {
     content: '';
     position: absolute;
     left: 7px;
@@ -52,12 +53,12 @@
     border-radius: 999px;
 }
 
-.js-plotly-plot .plotly .modebar-container {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar-container {
     height: 100% !important;
     pointer-events: none !important;
 }
 
-.js-plotly-plot .plotly .modebar {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar {
     top: auto !important;
     bottom: 7px !important;
     right: 7px !important;
@@ -66,22 +67,22 @@
     justify-content: flex-end;
 }
 
-.js-plotly-plot .plotly .modebar .modebar-group button {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button {
     margin-right: 7px;
 }
 
-.js-plotly-plot .plotly .modebar .modebar-group button svg {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button svg {
     scale: 1.4;
     transition: scale 0.2s;
 }
 
 /* メニューアイコンのツールチップ */
-.js-plotly-plot .plotly .modebar .modebar-group button::before {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button::before {
     transform: translateY(7px);
     animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.js-plotly-plot .plotly .modebar .modebar-group button::after {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button::after {
     transform: translateY(7px);
     animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     background-color: #333;
@@ -100,13 +101,13 @@
     }
 }
 
-.js-plotly-plot .plotly .modebar .modebar-group button:hover svg {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button:hover svg {
     scale: 1.5;
 }
 
 
 /* 詳細グループ（非表示の他ボタン群） */
-.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
     display: none;
 }
 
@@ -127,7 +128,7 @@
     }
 }
 
-.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--expanded button {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--expanded button {
     /* アニメーション適用 */
     opacity: 0;
     /* animation startまでのチラつき防止 */
@@ -137,7 +138,7 @@
 
 
 /* 詳細ボタンのスタイル */
-.js-plotly-plot .plotly .modebar .modebar-btn--details {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details {
     font-size: 18px;
     /* アイコンサイズ */
     cursor: pointer;
@@ -151,11 +152,11 @@
     justify-content: center;
 }
 
-.js-plotly-plot .plotly .modebar .modebar-btn--details:hover {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details:hover {
     color: #555;
 }
 
-.js-plotly-plot .plotly .modebar .modebar-btn--details.active {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details.active {
     color: #555;
 }
 /* Overlay for the maximized mode */
@@ -241,7 +242,7 @@
 }
 
 /* Wrapper for framer-motion layout animation */
-.quelmap-plot-wrapper .js-plotly-plot {
+.quelmap-plot-wrapper.js-plotly-plot {
     width: 100% !important;
     height: 100% !important;
 }

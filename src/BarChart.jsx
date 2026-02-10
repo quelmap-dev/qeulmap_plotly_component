@@ -1,5 +1,6 @@
 // src/BarChart.jsx
 import QuelmapPlot from "./QuelmapPlot";
+import Plot from "react-plotly.js";
 
 // const data = [
 //     {
@@ -84,10 +85,21 @@ const config = {
 
 export default function BarChart() {
     return (
+        <dev>
+<p>元々</p>
+<Plot
+            data={data}
+            layout={layout}
+            config={config}
+        />
+        <p>かっこいい版</p>
+
         <QuelmapPlot
             data={data}
             layout={{ ...layout, ...forcedLayout }}
             config={config}
         />
+
+    </dev>
     );
 }
