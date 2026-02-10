@@ -1,0 +1,142 @@
+/* ============================================
+ * Plotly グラフのCSSオーバーライド
+ * ============================================ */
+
+/* Dark Mode */
+/* .plot-container {
+	filter: invert(75%) hue-rotate(180deg);
+} */
+
+.js-plotly-plot .plotly g.hoverlayer {
+    display: none !important;
+}
+
+.js-plotly-plot .plotly .gl-container #scene svg g.hovertext {
+    display: none !important;
+}
+
+.js-plotly-plot .plotly .gl-container #scene {
+    width: 100% !important;
+    height: 100% !important;
+    left: 0 !important;
+    top: 0 !important;
+}
+
+.js-plotly-plot .plotly .custom-tooltip {
+    position: absolute;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    border-radius: 0.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s, opacity 0.1s;
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    overflow-wrap: normal !important;
+    padding: 10px 14px;
+}
+
+.js-plotly-plot .plotly .modebar-container {
+    height: 100% !important;
+    pointer-events: none !important;
+}
+
+.js-plotly-plot .plotly .modebar {
+    top: auto !important;
+    bottom: 7px !important;
+    right: 7px !important;
+    pointer-events: all;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.js-plotly-plot .plotly .modebar .modebar-group button {
+    margin-right: 7px;
+}
+
+.js-plotly-plot .plotly .modebar .modebar-group button svg {
+    scale: 1.4;
+    transition: scale 0.2s;
+}
+
+/* メニューアイコンのツールチップ */
+.js-plotly-plot .plotly .modebar .modebar-group button::before {
+    transform: translateY(7px);
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.js-plotly-plot .plotly .modebar .modebar-group button::after {
+    transform: translateY(7px);
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+@keyframes slideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(7px);
+    }
+}
+
+.js-plotly-plot .plotly .modebar .modebar-group button:hover svg {
+    scale: 1.5;
+}
+
+
+/* 詳細グループ（非表示の他ボタン群） */
+.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
+    display: none;
+}
+
+/* ポップアップアニメーション */
+@keyframes popIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+
+    60% {
+        transform: translateY(-4px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--expanded button {
+    /* アニメーション適用 */
+    opacity: 0;
+    /* animation startまでのチラつき防止 */
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+
+
+/* 詳細ボタンのスタイル */
+.js-plotly-plot .plotly .modebar .modebar-btn--details {
+    font-size: 18px;
+    /* アイコンサイズ */
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: #999;
+    transition: color 0.2s;
+    display: inline-flex;
+    /* センタリング */
+    align-items: center;
+    justify-content: center;
+}
+
+.js-plotly-plot .plotly .modebar .modebar-btn--details:hover {
+    color: #555;
+}
+
+.js-plotly-plot .plotly .modebar .modebar-btn--details.active {
+    color: #555;
+}
