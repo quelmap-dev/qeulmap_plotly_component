@@ -65,12 +65,7 @@ for(i = 0; i < pointCount; i++)
 //     cmax: 50
 //   }}]
 
-const forcedLayout = {
-    dragmode: "orbit",
-    transition: {
-        duration: 500,
-    },
-};
+
 
 const layout = {
     title: { text: "フルーツ売上", font: { size: 20 } },
@@ -96,7 +91,7 @@ export default function BarChart() {
 
         <QuelmapPlot
             data={data}
-            layout={{ ...layout, ...forcedLayout }}
+            layout={layout}
             config={config}
         />
 

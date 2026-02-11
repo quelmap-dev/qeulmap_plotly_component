@@ -342,10 +342,17 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         }
     };
 
+    const forcedLayout = {
+    dragmode: "orbit",
+    transition: {
+        duration: 500,
+    },
+    };
+
     return (
             <Plot
                 key={plotKey}
-                layout={internalLayout}
+                layout={{ ...internalLayout, ...forcedLayout }}
                 config={internalConfig}
                 className="quelmap-plot-wrapper"
                 onInitialized={handleInitialized}
