@@ -1,16 +1,56 @@
-# React + Vite
+# quelmap-plotly
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Plotly.js のカスタムラッパーコンポーネント。モードバーのカスタマイズやホバーツールチップのスタイリングが含まれています。
 
-Currently, two official plugins are available:
+## インストール
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install git+https://github.com/quelmap-dev/custom_plotry.git
+```
 
-## React Compiler
+## 使い方
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```tsx
+import { QuelmapPlot } from "quelmap-plotly";
+import "quelmap-plotly/style.css";
 
-## Expanding the ESLint configuration
+function App() {
+  return (
+    <QuelmapPlot
+      data={[
+        {
+          x: [1, 2, 3],
+          y: [2, 6, 3],
+          type: "scatter",
+          mode: "lines+markers",
+        },
+      ]}
+      layout={{ title: "Sample Chart" }}
+    />
+  );
+}
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Props
+
+`QuelmapPlot` は `react-plotly.js` の `Plot` コンポーネントと同じ Props を受け取ります。
+
+詳しくは [react-plotly.js](https://github.com/plotly/react-plotly.js#basic-props) を参照してください。
+
+## Peer Dependencies
+
+使用するプロジェクト側で以下のパッケージをインストールしてください。
+
+```bash
+npm install react react-dom plotly.js react-plotly.js
+```
+
+## 開発
+
+```bash
+# デモアプリの起動
+npm run dev
+
+# ライブラリビルド
+npm run build:lib
+```
