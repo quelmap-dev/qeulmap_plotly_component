@@ -5,7 +5,7 @@ Plotly.js のカスタムラッパーコンポーネント。モードバーの�
 ## インストール
 
 ```bash
-npm install git+https://github.com/quelmap-dev/custom_plotry.git
+npm install git+https://github.com/quelmap-dev/qeulmap_plotly_component.git
 ```
 
 ## 使い方
