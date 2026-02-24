@@ -11,6 +11,21 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     const isExpandedRef = useRef(false);
     const [plotKey, setPlotKey] = useState(0);
 
+    const containerRef = useRef(null);
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+        const ro = new ResizeObserver((entries) => {
+            const { height } = entries[0].contentRect;
+            if (height > 0 && !ready) {
+                setReady(true);
+            }
+        });
+        ro.observe(containerRef.current);
+        return () => ro.disconnect();
+    }, []);
+
     // コンポーネントのアンマウント時にObserverを切断する
     useEffect(() => {
         return () => {
@@ -37,16 +52,16 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         'path': 'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z'
     };
 
-    const getTranslate =(el) => {
-  const style = getComputedStyle(el);
-  const matrix = new DOMMatrix(style.transform);
+    const getTranslate = (el) => {
+        const style = getComputedStyle(el);
+        const matrix = new DOMMatrix(style.transform);
 
-  return {
-    x: matrix.m41,
-    y: matrix.m42,
-    z: matrix.m43
-  };
-}
+        return {
+            x: matrix.m41,
+            y: matrix.m42,
+            z: matrix.m43
+        };
+    }
 
     const internalConfig = {
         displaylogo: false,
@@ -176,7 +191,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         // ---------------------------------------------------------
         // 2. カスタムツールチップの作成
         // ---------------------------------------------------------
-        
+
         // 既存のツールチップがあれば削除（再初期化時など）
         const oldTooltip = plotDiv.querySelector(".custom-tooltip");
         if (oldTooltip) {
@@ -217,7 +232,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             const scene = plotDiv.querySelector(".gl-container #scene");
             if (scene) scene.appendChild(tooltip);
         }
-        
+
         let hoverlayer = hoverlayer_3d || hoverlayer_2d;
         const is3D = !!hoverlayer_3d;
 
@@ -249,7 +264,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                             const textEls = node.querySelectorAll("text");
                             let text = "";
                             let fontSize = null;
-                            
+
                             textEls.forEach((textEl) => {
                                 const tspans = textEl.childNodes;
                                 if (tspans.length === 0) {
@@ -299,7 +314,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                                 `;
                                 tooltip.style.setProperty("--tooltip-accent", gradient);
                                 tooltip.style.opacity = "1";
-                                
+
                                 if (!is3D) {
                                     isVisible = true;
                                 }
@@ -343,21 +358,25 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     };
 
     const forcedLayout = {
-    dragmode: "orbit",
-    transition: {
-        duration: 500,
-    },
+        dragmode: "orbit",
+        transition: {
+            duration: 500,
+        },
     };
 
     return (
-            <Plot
-                key={plotKey}
-                layout={{ ...internalLayout, ...forcedLayout }}
-                config={internalConfig}
-                className="quelmap-plot-wrapper"
-                onInitialized={handleInitialized}
-                onUpdate={handleUpdate}
-                {...props}
-            />
+        <div ref={containerRef} style={{ minHeight: 400 }}>
+            {ready &&
+                <Plot
+                    key={plotKey}
+                    layout={{ ...internalLayout, ...forcedLayout }}
+                    config={internalConfig}
+                    className="quelmap-plot-wrapper"
+                    onInitialized={handleInitialized}
+                    onUpdate={handleUpdate}
+                    {...props}
+                />
+            }
+        </div>
     );
 }
