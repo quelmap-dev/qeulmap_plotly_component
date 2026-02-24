@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import Plot from "react-plotly.js";
 import "./quelmap-plotly.css";
 
@@ -14,11 +14,14 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     const containerRef = useRef(null);
     const [ready, setReady] = useState(false);
 
+    // plotDivへの参照を保持（onUpdate時に再利用）
+    const plotDivRef = useRef(null);
+
     useEffect(() => {
         if (!containerRef.current) return;
         const ro = new ResizeObserver((entries) => {
             const { height } = entries[0].contentRect;
-            if (height > 0 && !ready) {
+            if (height > 0) {
                 setReady(true);
             }
         });
@@ -36,15 +39,15 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     }, []);
 
     // カスタムスタイルに必要なデフォルト設定
-    const internalLayout = {
+    const internalLayout = useMemo(() => ({
         modebar: {
             bgcolor: "transparent",
             color: "#999",
             activecolor: "#555",
         },
         paper_bgcolor: 'rgba(255,255,255, 0)',
-        ...layout, // ユーザー定義が優先（あるいはマージ）
-    };
+        ...layout,
+    }), [layout]);
 
     const refreshIcon = {
         'width': 24,
@@ -63,7 +66,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         };
     }
 
-    const internalConfig = {
+    const internalConfig = useMemo(() => ({
         displaylogo: false,
         responsive: true,
         ...config,
@@ -76,7 +79,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                 click: () => setPlotKey(prev => prev + 1)
             }
         ]
-    };
+    }), [config]);
 
     // ---------------------------------------------------------
     // モードバーのカスタマイズ（関数として抽出）
@@ -122,65 +125,74 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             }
         });
 
-        // 既に詳細ボタンが追加されていないかチェック（Re-render対策）
-        if (!modebar.querySelector(".modebar-btn--details")) {
-            const detailsGroup = document.createElement("div");
-            detailsGroup.className = "modebar-group";
-            detailsGroup.style.padding = "0";
-            detailsGroup.style.backgroundColor = "transparent";
+        // ---------------------------------------------------------
+        // 詳細ボタン: 毎回再作成する（Plotlyがモードバーを再構築するため、
+        // 古いボタンのイベントリスナーが stale な otherGroups を参照する問題を回避）
+        // ---------------------------------------------------------
+        const existingDetailsGroup = modebar.querySelector(".modebar-btn--details")?.closest(".modebar-group");
+        if (existingDetailsGroup) {
+            existingDetailsGroup.remove();
+        }
 
-            const detailsBtn = document.createElement("button");
-            detailsBtn.type = "button";
-            detailsBtn.className = "modebar-btn modebar-btn--details";
-            detailsBtn.setAttribute("aria-label", "詳細メニューを表示");
+        const detailsGroup = document.createElement("div");
+        detailsGroup.className = "modebar-group";
+        detailsGroup.style.padding = "0";
+        detailsGroup.style.backgroundColor = "transparent";
 
-            // アイコンSVG作成 (Material Design Icons: more_horiz / close)
-            const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            iconSvg.setAttribute("viewBox", "0 0 24 24");
-            iconSvg.setAttribute("height", "1em");
-            iconSvg.setAttribute("width", "1em");
-            iconSvg.style.fill = "currentColor";
+        const detailsBtn = document.createElement("button");
+        detailsBtn.type = "button";
+        detailsBtn.className = "modebar-btn modebar-btn--details";
+        detailsBtn.setAttribute("aria-label", "詳細メニューを表示");
 
-            const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            const morePath =
-                "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z";
-            const closePath =
-                "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+        // アイコンSVG作成 (Material Design Icons: more_horiz / close)
+        const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        iconSvg.setAttribute("viewBox", "0 0 24 24");
+        iconSvg.setAttribute("height", "1em");
+        iconSvg.setAttribute("width", "1em");
+        iconSvg.style.fill = "currentColor";
 
-            iconPath.setAttribute("d", isExpandedRef.current ? closePath : morePath);
+        const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        const morePath =
+            "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z";
+        const closePath =
+            "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+
+        iconPath.setAttribute("d", isExpandedRef.current ? closePath : morePath);
+        detailsBtn.classList.toggle("active", isExpandedRef.current);
+        iconSvg.appendChild(iconPath);
+        detailsBtn.appendChild(iconSvg);
+
+        // クリックハンドラは最新の otherGroups を参照する
+        detailsBtn.addEventListener("click", () => {
+            isExpandedRef.current = !isExpandedRef.current;
             detailsBtn.classList.toggle("active", isExpandedRef.current);
-            iconSvg.appendChild(iconPath);
-            detailsBtn.appendChild(iconSvg);
+            iconPath.setAttribute("d", isExpandedRef.current ? closePath : morePath);
 
-            detailsBtn.addEventListener("click", () => {
-                isExpandedRef.current = !isExpandedRef.current;
-                detailsBtn.classList.toggle("active", isExpandedRef.current);
-                iconPath.setAttribute("d", isExpandedRef.current ? closePath : morePath);
+            let delay = 0;
+            otherGroups.forEach((group) => {
+                group.classList.toggle("modebar-group--hidden", !isExpandedRef.current);
+                group.classList.toggle("modebar-group--expanded", isExpandedRef.current);
 
-                let delay = 0;
-                otherGroups.forEach((group) => {
-                    group.classList.toggle("modebar-group--hidden", !isExpandedRef.current);
-                    group.classList.toggle("modebar-group--expanded", isExpandedRef.current);
-
-                    group.querySelectorAll("button").forEach((btn) => {
-                        if (isExpandedRef.current) {
-                            btn.style.animationDelay = `${delay}ms`;
-                            delay += 60;
-                        } else {
-                            btn.style.animationDelay = "";
-                        }
-                    });
+                group.querySelectorAll("button").forEach((btn) => {
+                    if (isExpandedRef.current) {
+                        btn.style.animationDelay = `${delay}ms`;
+                        delay += 60;
+                    } else {
+                        btn.style.animationDelay = "";
+                    }
                 });
             });
+        });
 
-            detailsGroup.appendChild(detailsBtn);
-            // ダウンロードグループの後ろに挿入
-            downloadGroup.after(detailsGroup);
-        }
+        detailsGroup.appendChild(detailsBtn);
+        // ダウンロードグループの後ろに挿入
+        downloadGroup.after(detailsGroup);
     };
 
     const handleInitialized = (figure, plotDiv) => {
         let vanishTimeout = null;
+
+        plotDivRef.current = plotDiv;
 
         const plotlyContainer = plotDiv.querySelector(".plot-container.plotly .modebar-container");
 
@@ -277,14 +289,11 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                                 fontSize = textEl
                                     ? parseFloat(window.getComputedStyle(textEl).fontSize)
                                     : null;
-                                // color = textEl
-                                //     ? window.getComputedStyle(textEl).fill
-                                //     : null;
                             });
 
                             if (coords) {
                                 baseCoords = coords;
-                                // まだ0,0にいるなら、duaration 0で一旦移動させる
+                                // まだ0,0にいるなら、duration 0で一旦移動させる
                                 if (getTranslate(tooltip).x === 0 && getTranslate(tooltip).y === 0) {
                                     tooltip.style.transition = "none";
                                     tooltip.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
@@ -302,7 +311,6 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
                                 tooltip.style.fontSize = fontSize
                                     ? `${fontSize}px`
                                     : "inherit";
-                                // tooltip.style.color = color || "inherit";
                                 tooltip.innerHTML = text || "";
                                 const gradient = `
                                     linear-gradient(
@@ -357,23 +365,26 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         }
     };
 
-    const forcedLayout = {
+    // forcedLayout を useMemo で安定化し、毎レンダーで新しいオブジェクト参照が
+    // 生成されて Plotly が不要な再描画を行うのを防ぐ
+    const mergedLayout = useMemo(() => ({
+        ...internalLayout,
         dragmode: "orbit",
-        transition: {
-            duration: 500,
-        },
-    };
+        // transition を削除: 動的なデータ更新時にレイアウト崩れの原因になる
+    }), [internalLayout]);
 
     return (
         <div ref={containerRef} style={{ minHeight: 400 }}>
             {ready &&
                 <Plot
                     key={plotKey}
-                    layout={{ ...internalLayout, ...forcedLayout }}
+                    layout={mergedLayout}
                     config={internalConfig}
                     className="quelmap-plot-wrapper"
                     onInitialized={handleInitialized}
                     onUpdate={handleUpdate}
+                    useResizeHandler={true}
+                    style={{ width: "100%", height: "100%" }}
                     {...props}
                 />
             }
