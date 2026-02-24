@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import Plot from "react-plotly.js";
 import "./quelmap-plotly.css";
 
@@ -6,28 +6,33 @@ import "./quelmap-plotly.css";
  * Plotlyのカスタマイズ済みラッパーコンポーネント
  * 標準のPlotコンポーネントと同じPropsを受け取ります。
  */
-export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, onUpdate, ...props }) {
+export default function QuelmapPlot({ layout = {}, config = {}, data, onInitialized, onUpdate, ...props }) {
     const observerRef = useRef(null);
     const isExpandedRef = useRef(false);
     const [plotKey, setPlotKey] = useState(0);
 
     const containerRef = useRef(null);
-    const [ready, setReady] = useState(false);
+    const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
-    // plotDivへの参照を保持（onUpdate時に再利用）
-    const plotDivRef = useRef(null);
+    // data/layout が変わるたびにインクリメントし、Plotly に再描画を明示指示
+    const [revision, setRevision] = useState(0);
+    useEffect(() => {
+        setRevision(prev => prev + 1);
+    }, [data, layout]);
 
     useEffect(() => {
         if (!containerRef.current) return;
         const ro = new ResizeObserver((entries) => {
-            const { height } = entries[0].contentRect;
-            if (height > 0) {
-                setReady(true);
+            const { width, height } = entries[0].contentRect;
+            if (width > 0 && height > 0) {
+                setContainerSize({ width, height });
             }
         });
         ro.observe(containerRef.current);
         return () => ro.disconnect();
     }, []);
+
+    const ready = containerSize.width > 0 && containerSize.height > 0;
 
     // コンポーネントのアンマウント時にObserverを切断する
     useEffect(() => {
@@ -37,17 +42,6 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             }
         };
     }, []);
-
-    // カスタムスタイルに必要なデフォルト設定
-    const internalLayout = useMemo(() => ({
-        modebar: {
-            bgcolor: "transparent",
-            color: "#999",
-            activecolor: "#555",
-        },
-        paper_bgcolor: 'rgba(255,255,255, 0)',
-        ...layout,
-    }), [layout]);
 
     const refreshIcon = {
         'width': 24,
@@ -65,6 +59,21 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             z: matrix.m43
         };
     }
+
+    // カスタムスタイルに必要なデフォルト設定
+    const mergedLayout = useMemo(() => ({
+        modebar: {
+            bgcolor: "transparent",
+            color: "#999",
+            activecolor: "#555",
+        },
+        paper_bgcolor: 'rgba(255,255,255, 0)',
+        ...layout,
+        // autosize を有効にしつつ、明示的に高さを指定して 0 へのフォールバックを防ぐ
+        autosize: true,
+        height: layout.height || containerSize.height || 400,
+        dragmode: "orbit",
+    }), [layout, containerSize.height]);
 
     const internalConfig = useMemo(() => ({
         displaylogo: false,
@@ -85,7 +94,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
     // モードバーのカスタマイズ（関数として抽出）
     // PlotlyがDOM再構築する場合にも再適用できるようにする
     // ---------------------------------------------------------
-    const customizeModebar = (plotDiv) => {
+    const customizeModebar = useCallback((plotDiv) => {
         const modebar = plotDiv.querySelector(".modebar");
         if (!modebar) return;
 
@@ -125,10 +134,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             }
         });
 
-        // ---------------------------------------------------------
-        // 詳細ボタン: 毎回再作成する（Plotlyがモードバーを再構築するため、
-        // 古いボタンのイベントリスナーが stale な otherGroups を参照する問題を回避）
-        // ---------------------------------------------------------
+        // 詳細ボタン: 毎回再作成する（Plotlyがモードバーを再構築するため）
         const existingDetailsGroup = modebar.querySelector(".modebar-btn--details")?.closest(".modebar-group");
         if (existingDetailsGroup) {
             existingDetailsGroup.remove();
@@ -162,7 +168,6 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         iconSvg.appendChild(iconPath);
         detailsBtn.appendChild(iconSvg);
 
-        // クリックハンドラは最新の otherGroups を参照する
         detailsBtn.addEventListener("click", () => {
             isExpandedRef.current = !isExpandedRef.current;
             detailsBtn.classList.toggle("active", isExpandedRef.current);
@@ -185,14 +190,11 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         });
 
         detailsGroup.appendChild(detailsBtn);
-        // ダウンロードグループの後ろに挿入
         downloadGroup.after(detailsGroup);
-    };
+    }, []);
 
     const handleInitialized = (figure, plotDiv) => {
         let vanishTimeout = null;
-
-        plotDivRef.current = plotDiv;
 
         const plotlyContainer = plotDiv.querySelector(".plot-container.plotly .modebar-container");
 
@@ -224,7 +226,6 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            // マウス位置からのオフセット（-5px ~ 5px の範囲で動く）
             const offsetX = (mouseX - baseCoords.x) * 0.2;
             const offsetY = (mouseY - baseCoords.y) * 0.2;
 
@@ -293,11 +294,9 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
 
                             if (coords) {
                                 baseCoords = coords;
-                                // まだ0,0にいるなら、duration 0で一旦移動させる
                                 if (getTranslate(tooltip).x === 0 && getTranslate(tooltip).y === 0) {
                                     tooltip.style.transition = "none";
                                     tooltip.style.transform = `translate(${coords.x}px, ${coords.y}px)`;
-                                    // 次のフレームで通常のトランジションに戻す
                                     requestAnimationFrame(() => {
                                         tooltip.style.transition = "";
                                     });
@@ -351,13 +350,11 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
             observerRef.current = observer;
         }
 
-        // ユーザーが提供した onInitialized があれば実行
         if (onInitialized) {
             onInitialized(figure, plotDiv);
         }
     };
 
-    // Plotlyが内部的にPlotly.react()でDOMを再構築した場合にモードバーを再カスタマイズ
     const handleUpdate = (figure, plotDiv) => {
         customizeModebar(plotDiv);
         if (onUpdate) {
@@ -365,26 +362,23 @@ export default function QuelmapPlot({ layout = {}, config = {}, onInitialized, o
         }
     };
 
-    // forcedLayout を useMemo で安定化し、毎レンダーで新しいオブジェクト参照が
-    // 生成されて Plotly が不要な再描画を行うのを防ぐ
-    const mergedLayout = useMemo(() => ({
-        ...internalLayout,
-        dragmode: "orbit",
-        // transition を削除: 動的なデータ更新時にレイアウト崩れの原因になる
-    }), [internalLayout]);
-
     return (
-        <div ref={containerRef} style={{ minHeight: 400 }}>
+        <div
+            ref={containerRef}
+            style={{ minHeight: 400, position: "relative" }}
+        >
             {ready &&
                 <Plot
                     key={plotKey}
+                    data={data}
                     layout={mergedLayout}
                     config={internalConfig}
+                    revision={revision}
                     className="quelmap-plot-wrapper"
-                    onInitialized={handleInitialized}
-                    onUpdate={handleUpdate}
                     useResizeHandler={true}
                     style={{ width: "100%", height: "100%" }}
+                    onInitialized={handleInitialized}
+                    onUpdate={handleUpdate}
                     {...props}
                 />
             }
