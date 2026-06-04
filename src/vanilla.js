@@ -1,7 +1,5 @@
 import Plotly from "plotly.js";
-import { createPlotlyDomController, mergeQuelmapLayout } from "./plotly-customization";
-
-const DEFAULT_MIN_HEIGHT = 400;
+import { createPlotlyDomController, DEFAULT_MIN_HEIGHT, mergeQuelmapLayout } from "./plotly-customization";
 
 const resolveContainer = (target) => {
   if (typeof target === "string") {
@@ -19,6 +17,12 @@ const ensureContainerStyle = (container) => {
   }
 };
 
+/**
+ * Create a Plotly chart without React.
+ * @param {string | HTMLElement} target Selector or plot container element.
+ * @param {{ data?: unknown[], layout?: Record<string, unknown>, config?: Record<string, unknown>, onInitialized?: Function, onUpdate?: Function }} initialOptions Initial chart options.
+ * @returns {Promise<{ element: HTMLElement, update: (nextOptions?: object) => Promise<void>, destroy: () => void }>}
+ */
 export async function createQuelmapPlot(target, initialOptions = {}) {
   const container = resolveContainer(target);
   if (!(container instanceof HTMLElement)) {
@@ -130,4 +134,3 @@ export async function createQuelmapPlot(target, initialOptions = {}) {
     },
   };
 }
-
