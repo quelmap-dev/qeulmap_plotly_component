@@ -1,3 +1,3 @@
-export { default as QuelmapPlot } from "./QuelmapPlot.jsx";
 export { createQuelmapPlot } from "./vanilla.js";
 import "./quelmap-plotly.css";
+

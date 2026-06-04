@@ -10,7 +10,8 @@
       "import": "./dist/index.js",
       "types": "./src/index.d.ts"
     },
-    "./style.css": "./dist/index.css"
+    "./style.css": "./dist/index.css",
+    "./cdn": "./dist/quelmap-plotly.cdn.js"
   },
   "style": "dist/index.css",
   "files": [
@@ -20,7 +21,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:lib": "vite build --mode lib",
+    "build:lib": "vite build --mode lib && vite build --mode cdn",
     "prepare": "npm run build:lib",
     "lint": "eslint .",
     "preview": "vite preview"
