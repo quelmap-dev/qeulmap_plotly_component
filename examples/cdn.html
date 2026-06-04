@@ -11,11 +11,10 @@
 
     <!-- 2) quelmap-plotly の CSS と UMD スクリプト -->
     <!--
-      本番（npm 公開後）は CDN から:
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quelmap-plotly/dist/quelmap-plotly.css">
-        <script src="https://cdn.jsdelivr.net/npm/quelmap-plotly/dist/quelmap-plotly.umd.js"></script>
-      公開前は GitHub から直接（ブランチ指定）:
-        https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@claude/inspiring-hopper-7LsPJ/dist/quelmap-plotly.umd.js
+      npm 未公開でも、jsDelivr の GitHub 直配信で利用できます（@main はタグや commit に変更可）:
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.css">
+        <script src="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.umd.js"></script>
+      ※ スラッシュを含むブランチ名（claude/... 等）は @gh で解釈されないため、commit ハッシュかタグを指定してください。
       このファイルはローカルの dist を参照しています（先に `npm run build:standalone` を実行してください）。
     -->
     <link rel="stylesheet" href="../dist/quelmap-plotly.css" />
