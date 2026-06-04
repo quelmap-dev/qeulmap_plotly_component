@@ -5,11 +5,14 @@
   "type": "module",
   "module": "dist/index.js",
   "types": "src/index.d.ts",
+  "unpkg": "dist/quelmap-plotly.umd.js",
+  "jsdelivr": "dist/quelmap-plotly.umd.js",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./src/index.d.ts"
     },
+    "./standalone": "./dist/quelmap-plotly.umd.js",
     "./style.css": "./dist/index.css"
   },
   "style": "dist/index.css",
@@ -21,7 +24,9 @@
     "dev": "vite",
     "build": "vite build",
     "build:lib": "vite build --mode lib",
-    "prepare": "npm run build:lib",
+    "build:standalone": "vite build --mode standalone",
+    "build:all": "npm run build:lib && npm run build:standalone",
+    "prepare": "npm run build:all",
     "lint": "eslint .",
     "preview": "vite preview"
   },
