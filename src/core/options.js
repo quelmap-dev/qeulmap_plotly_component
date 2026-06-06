@@ -7,8 +7,24 @@ import { refreshIcon } from "./icons.js";
  *
  * @param {object} layout         ユーザー指定の layout
  * @param {number} [fallbackHeight] 高さが未指定のときに使うフォールバック（コンテナの実寸など）
+ * @param {object} [options]
+ * @param {boolean} [options.minimal] 自動適用（ドロップイン）モード。
+ *   既存チャートの見た目・挙動を保つため、ツールバーの色以外は一切上書きしない。
+ *   背景・高さ・dragmode などは利用者の layout をそのまま尊重する。
  */
-export function buildLayout(layout = {}, fallbackHeight) {
+export function buildLayout(layout = {}, fallbackHeight, { minimal = false } = {}) {
+    if (minimal) {
+        return {
+            ...layout,
+            modebar: {
+                bgcolor: "transparent",
+                color: "#999",
+                activecolor: "#555",
+                ...layout.modebar,
+            },
+        };
+    }
+
     return {
         modebar: {
             bgcolor: "transparent",

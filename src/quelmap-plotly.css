@@ -241,8 +241,10 @@
     scale: 1.5;
 }
 
-/* Wrapper for framer-motion layout animation */
-.quelmap-plot-wrapper.js-plotly-plot {
+/* 明示 API / React 版の内部ラッパーはコンテナいっぱいに広げる。
+   自動適用（ドロップイン）では利用者の要素自体が描画先になるため、
+   サイズは上書きしないよう quelmap-plot-fill は付けない。 */
+.quelmap-plot-fill.js-plotly-plot {
     width: 100% !important;
     height: 100% !important;
 }

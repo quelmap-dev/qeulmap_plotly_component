@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>quelmap-plotly — 自動適用（ドロップイン）サンプル</title>
+
+    <!-- 1) Plotly.js 本体（本家CDNから読み込む。※ここは既存ページのまま） -->
+    <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
+
+    <!--
+      2) quelmap-plotly の CSS と JS を足すだけ。
+         これだけで window.Plotly.newPlot / Plotly.react が自動的にラップされ、
+         ツールバー（モードバー）とホバー（ツールチップ）のカスタマイズが
+         既存の Plotly.newPlot(...) 呼び出しにそのまま適用されます。
+
+         GitHub 直配信（jsDelivr @gh）の例:
+           <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.css">
+           <script src="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.umd.js"></script>
+
+         このファイルはローカルの dist を参照しています（先に `npm run build:standalone`）。
+
+         自動適用を止めたい場合は、下の script より前で
+           <script>window.__QUELMAP_DISABLE_AUTOPATCH__ = true;</script>
+         を宣言してください。
+    -->
+    <link rel="stylesheet" href="../dist/quelmap-plotly.css" />
+    <script src="../dist/quelmap-plotly.umd.js"></script>
+
+    <style>
+        body { font-family: sans-serif; margin: 2rem; color: #222; }
+        h1 { font-size: 1.25rem; }
+        .row { display: flex; gap: 12px; align-items: center; margin: 12px 0; }
+        button { padding: 6px 16px; border-radius: 6px; border: 1px solid #ccc; background: #f3f4f6; cursor: pointer; }
+        .chart { width: 100%; max-width: 720px; height: 420px; }
+        .dark { background: #1a1a1a; padding: 16px; border-radius: 8px; }
+    </style>
+</head>
+
+<body>
+    <h1>quelmap-plotly — 既存の Plotly.newPlot がそのまま自動適用される例</h1>
+
+    <div class="row">
+        <strong>データ切替テスト:</strong>
+        <button id="toggle">データを切り替える（Plotly.react）</button>
+    </div>
+
+    <!-- 2D 棒グラフ -->
+    <div id="barChart" class="chart"></div>
+
+    <h1 style="margin-top:2rem;">3D の例（ダークモード）</h1>
+    <div class="dark">
+        <div id="scatter3d" class="chart"></div>
+    </div>
+
+    <script>
+        // ↓↓↓ ここは「素の Plotly」を使う既存コードのまま。書き換え不要。 ↓↓↓
+
+        const dataA = [
+            { x: ['Zebras', 'Lions', 'Pelicans'], y: [90, 40, 60], type: 'bar', name: 'New York Zoo' },
+            { x: ['Zebras', 'Lions', 'Pelicans'], y: [10, 80, 45], type: 'bar', name: 'San Francisco Zoo' },
+        ];
+        const dataB = [
+            { x: ['Zebras', 'Lions', 'Pelicans', 'Elephants', 'Penguins'], y: [50, 70, 30, 95, 55], type: 'bar', name: 'New York Zoo' },
+            { x: ['Zebras', 'Lions', 'Pelicans', 'Elephants', 'Penguins'], y: [65, 20, 85, 40, 75], type: 'bar', name: 'San Francisco Zoo' },
+        ];
+
+        // 素の Plotly.newPlot をそのまま呼ぶ → quelmap のカスタマイズが自動で乗る
+        Plotly.newPlot('barChart', dataA, { title: { text: '動物園データ' } });
+
+        // 素の Plotly.react もそのまま
+        let useAlt = false;
+        document.getElementById('toggle').addEventListener('click', () => {
+            useAlt = !useAlt;
+            Plotly.react('barChart', useAlt ? dataB : dataA, {
+                title: { text: useAlt ? '動物園データ（拡張版）' : '動物園データ' },
+            });
+        });
+
+        // 3D 散布図（こちらも素の Plotly.newPlot のまま）
+        const n = 31;
+        const x = [], y = [], z = [], c = [];
+        for (let i = 0; i < n; i++) {
+            const r = 10 * Math.cos(i / 10);
+            x.push(r * Math.cos(i));
+            y.push(r * Math.sin(i));
+            z.push(i);
+            c.push(i);
+        }
+        Plotly.newPlot('scatter3d', [{
+            x, y, z, type: 'scatter3d', mode: 'markers',
+            marker: { size: 6, color: c, colorscale: 'Viridis' },
+        }], { title: { text: '3D Scatter' } });
+    </script>
+</body>
+
+</html>

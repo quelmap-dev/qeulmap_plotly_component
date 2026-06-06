@@ -95,7 +95,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, data, onInitiali
                     layout={mergedLayout}
                     config={internalConfig}
                     revision={revision}
-                    className="quelmap-plot-wrapper"
+                    className="quelmap-plot-wrapper quelmap-plot-fill"
                     useResizeHandler={true}
                     style={{ width: "100%", height: "100%" }}
                     onInitialized={handleInitialized}
