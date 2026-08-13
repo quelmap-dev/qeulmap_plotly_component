@@ -159,6 +159,22 @@
 .quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details.active {
     color: #555;
 }
+/* CSVダウンロードボタンのスタイル */
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: #999;
+    transition: color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv:hover {
+    color: #555;
+}
+
 /* Overlay for the maximized mode */
 .quelmap-plot-overlay {
     position: fixed;

@@ -1,5 +1,7 @@
 // モードバーのカスタマイズ（React版・vanilla版で共有）
 // Plotly が DOM を再構築しても再適用できるよう、plotDiv を受け取る純粋な DOM 操作として実装する。
+import { csvDownloadIcon } from "./icons.js";
+import { downloadCsv } from "./csv.js";
 
 const morePath =
     "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z";
@@ -36,6 +38,40 @@ export function customizeModebar(plotDiv, state) {
                 path.removeAttribute("transform");
             }
         }
+    }
+
+    // CSVダウンロードボタン: 画像保存ボタンの横に追加（Plotlyがモードバーを再構築するため毎回作り直す）
+    const existingCsvBtn = modebar.querySelector(".modebar-btn--csv");
+    if (existingCsvBtn) {
+        existingCsvBtn.remove();
+    }
+
+    const csvBtn = document.createElement("button");
+    csvBtn.type = "button";
+    csvBtn.setAttribute("rel", "tooltip");
+    csvBtn.className = "modebar-btn modebar-btn--csv";
+    csvBtn.setAttribute("data-title", "Download data as csv");
+    csvBtn.setAttribute("aria-label", "データをCSV形式でダウンロード");
+
+    const csvSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    csvSvg.setAttribute("viewBox", `0 0 ${csvDownloadIcon.width} ${csvDownloadIcon.height}`);
+    csvSvg.setAttribute("height", "1em");
+    csvSvg.setAttribute("width", "1em");
+    csvSvg.style.fill = "currentColor";
+
+    const csvPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    csvPath.setAttribute("d", csvDownloadIcon.path);
+    csvSvg.appendChild(csvPath);
+    csvBtn.appendChild(csvSvg);
+
+    csvBtn.addEventListener("click", () => {
+        downloadCsv(plotDiv);
+    });
+
+    if (downloadBtn) {
+        downloadBtn.after(csvBtn);
+    } else {
+        downloadGroup.appendChild(csvBtn);
     }
 
     // 詳細ボタンのグループを除外してotherGroupsを取得
