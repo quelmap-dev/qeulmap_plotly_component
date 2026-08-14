@@ -76,28 +76,52 @@
     transition: scale 0.2s;
 }
 
-/* メニューアイコンのツールチップ */
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button::before {
-    transform: translateY(7px);
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+/* メニューアイコンのツールチップ
+   Plotly 標準の CSS 疑似要素ツールチップは祖先の overflow: hidden で切れてしまうため無効化し、
+   JS で body 直下に固定配置で描画する（.quelmap-modebar-tooltip / src/core/modebar-tooltip.js） */
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::before,
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::after {
+    display: none !important;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button::after {
-    transform: translateY(7px);
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    background-color: #333;
-    border-radius: 5px;
+/* プロットのホバー要素（.custom-tooltip）とスタイルを合わせる */
+.quelmap-modebar-tooltip {
+    position: fixed;
+    z-index: 10010;
+    transform: translate(-50%, -100%);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-radius: 0.5rem;
+    padding: 6px 12px;
+    color: black;
+    background-color: #f7f7f7;
+    font-size: 13px;
+    line-height: 1.4;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    animation: quelmapTooltipIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-@keyframes slideUp {
+/* ダークモード: .custom-tooltip は invert フィルタ内にあるため自動で暗くなるが、
+   このツールチップは body 直下でフィルタが効かないため、フィルタ適用後の見た目
+   （#f7f7f7 → 約#2c2c2c / black → 約#d9d9d9）を明示的に指定する。
+   .dark が body より内側のスコープの場合は JS が .dark クラスを直接付与する */
+.dark .quelmap-modebar-tooltip,
+.quelmap-modebar-tooltip.dark {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    background-color: #2c2c2c;
+    color: #d9d9d9;
+}
+
+@keyframes quelmapTooltipIn {
     0% {
         opacity: 0;
-        transform: translateY(15px);
+        transform: translate(-50%, calc(-100% + 8px));
     }
 
     100% {
         opacity: 1;
-        transform: translateY(7px);
+        transform: translate(-50%, -100%);
     }
 }
 
@@ -106,59 +130,27 @@
 }
 
 
-/* 詳細グループ（非表示の他ボタン群） */
+/* 非表示のボタン群（ズーム・パン・投げ縄など、画像保存・CSV以外） */
 .quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
     display: none;
 }
 
-/* ポップアップアニメーション */
-@keyframes popIn {
-    0% {
-        opacity: 0;
-        transform: translateY(10px) scale(0.95);
-    }
-
-    60% {
-        transform: translateY(-4px) scale(1.02);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--expanded button {
-    /* アニメーション適用 */
-    opacity: 0;
-    /* animation startまでのチラつき防止 */
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-
-
-/* 詳細ボタンのスタイル */
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details {
-    font-size: 18px;
-    /* アイコンサイズ */
+/* CSVダウンロードボタンのスタイル */
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv {
     cursor: pointer;
     background: transparent;
     border: none;
     color: #999;
     transition: color 0.2s;
     display: inline-flex;
-    /* センタリング */
     align-items: center;
     justify-content: center;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details:hover {
+.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv:hover {
     color: #555;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--details.active {
-    color: #555;
-}
 /* Overlay for the maximized mode */
 .quelmap-plot-overlay {
     position: fixed;

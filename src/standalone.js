@@ -57,10 +57,8 @@ function ensureEntry(container) {
     entry = {
         container,
         inner,
-        state: { isExpanded: false },
         tooltip: null,
         ro: null,
-        last: null,
     };
     registry.set(container, entry);
     return entry;
@@ -68,8 +66,7 @@ function ensureEntry(container) {
 
 // 描画後に毎回行うカスタマイズ（モードバーの再構築 + ツールチップの貼り直し）
 function applyCustomizations(entry) {
-    entry.state.isExpanded = false;
-    customizeModebar(entry.inner, entry.state);
+    customizeModebar(entry.inner);
 
     if (entry.tooltip) entry.tooltip.disconnect();
     entry.tooltip = setupTooltip(entry.inner);
@@ -82,7 +79,7 @@ function attachListeners(entry) {
 
     // Plotly が再描画するたびにモードバーを再カスタマイズ（React版の onUpdate 相当）
     if (inner.removeAllListeners) inner.removeAllListeners("plotly_afterplot");
-    inner.on("plotly_afterplot", () => customizeModebar(inner, entry.state));
+    inner.on("plotly_afterplot", () => customizeModebar(inner));
 
     // コンテナのサイズ変化に追従（responsive:true は主に window resize を見るため補完）
     if (!entry.ro && typeof ResizeObserver !== "undefined") {
@@ -93,14 +90,6 @@ function attachListeners(entry) {
     }
 }
 
-// 保持している data/layout/config で完全に描画し直す（「ビューのリセット」用）
-function rebuild(container) {
-    const entry = registry.get(container);
-    if (!entry || !entry.last) return Promise.resolve();
-    const { data, layout, config } = entry.last;
-    return newPlot(container, data, layout, config);
-}
-
 /**
  * Plotly.newPlot 相当。グラフを新規描画する。
  * @returns {Promise<HTMLElement>} 描画完了後にグラフ div を解決する Promise
@@ -109,10 +98,9 @@ export function newPlot(el, data, layout = {}, config = {}) {
     const Plotly = getPlotly();
     const container = resolveEl(el);
     const entry = ensureEntry(container);
-    entry.last = { data, layout, config };
 
     const fullLayout = buildLayout(layout, entry.inner.clientHeight);
-    const fullConfig = buildConfig(config, { onReset: () => rebuild(container) });
+    const fullConfig = buildConfig(config);
 
     return Plotly.newPlot(entry.inner, data, fullLayout, fullConfig).then((gd) => {
         applyCustomizations(entry);
@@ -131,12 +119,11 @@ export function react(el, data, layout = {}, config = {}) {
     const entry = registry.get(container);
     if (!entry) return newPlot(el, data, layout, config);
 
-    entry.last = { data, layout, config };
     const fullLayout = buildLayout(layout, entry.inner.clientHeight);
-    const fullConfig = buildConfig(config, { onReset: () => rebuild(container) });
+    const fullConfig = buildConfig(config);
 
     return Plotly.react(entry.inner, data, fullLayout, fullConfig).then((gd) => {
-        customizeModebar(entry.inner, entry.state);
+        customizeModebar(entry.inner);
         return gd;
     });
 }

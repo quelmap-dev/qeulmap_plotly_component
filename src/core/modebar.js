@@ -1,20 +1,19 @@
 // モードバーのカスタマイズ（React版・vanilla版で共有）
 // Plotly が DOM を再構築しても再適用できるよう、plotDiv を受け取る純粋な DOM 操作として実装する。
-
-const morePath =
-    "M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z";
-const closePath =
-    "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z";
+import { csvDownloadIcon } from "./icons.js";
+import { downloadCsv } from "./csv.js";
+import { attachModebarTooltips } from "./modebar-tooltip.js";
 
 /**
  * モードバーをカスタマイズする。
  *  - ダウンロードボタンのアイコンを差し替え
- *  - 詳細メニュー（…）ボタンを追加し、他ボタン群の開閉を制御
+ *  - 画像保存ボタンの横にCSVダウンロードボタンを追加
+ *  - 画像保存・CSV以外のボタン群（ズーム・パン・投げ縄など）は使わないため非表示化
+ *  - ホバーツールチップを overflow: hidden の影響を受けない固定配置で描画
  *
  * @param {HTMLElement} plotDiv Plotly のグラフ div（.js-plotly-plot 要素）
- * @param {{ isExpanded: boolean }} state 開閉状態を保持する可変オブジェクト
  */
-export function customizeModebar(plotDiv, state) {
+export function customizeModebar(plotDiv) {
     const modebar = plotDiv.querySelector(".modebar");
     if (!modebar) return;
 
@@ -38,72 +37,62 @@ export function customizeModebar(plotDiv, state) {
         }
     }
 
-    // 詳細ボタンのグループを除外してotherGroupsを取得
-    const otherGroups = Array.from(groups).slice(1).filter(
-        (g) => !g.querySelector(".modebar-btn--details")
-    );
-
-    // 現在の展開状態を適用
-    otherGroups.forEach((group) => {
-        if (state.isExpanded) {
-            group.classList.remove("modebar-group--hidden");
-            group.classList.add("modebar-group--expanded");
-        } else {
-            group.classList.add("modebar-group--hidden");
-            group.classList.remove("modebar-group--expanded");
-        }
-    });
-
-    // 詳細ボタン: 毎回再作成する（Plotlyがモードバーを再構築するため）
-    const existingDetailsGroup = modebar.querySelector(".modebar-btn--details")?.closest(".modebar-group");
-    if (existingDetailsGroup) {
-        existingDetailsGroup.remove();
+    // CSVダウンロードボタン: 画像保存ボタンの横に追加（Plotlyがモードバーを再構築するため毎回作り直す）
+    const existingCsvBtn = modebar.querySelector(".modebar-btn--csv");
+    if (existingCsvBtn) {
+        existingCsvBtn.remove();
     }
 
-    const detailsGroup = document.createElement("div");
-    detailsGroup.className = "modebar-group";
-    detailsGroup.style.padding = "0";
-    detailsGroup.style.backgroundColor = "transparent";
+    const csvBtn = document.createElement("button");
+    csvBtn.type = "button";
+    csvBtn.setAttribute("rel", "tooltip");
+    csvBtn.className = "modebar-btn modebar-btn--csv";
+    csvBtn.setAttribute("data-title", "Download data as csv");
+    csvBtn.setAttribute("aria-label", "データをCSV形式でダウンロード");
 
-    const detailsBtn = document.createElement("button");
-    detailsBtn.type = "button";
-    detailsBtn.className = "modebar-btn modebar-btn--details";
-    detailsBtn.setAttribute("aria-label", "詳細メニューを表示");
+    const csvSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    csvSvg.setAttribute("viewBox", `0 0 ${csvDownloadIcon.width} ${csvDownloadIcon.height}`);
+    csvSvg.setAttribute("height", "1em");
+    csvSvg.setAttribute("width", "1em");
+    csvSvg.style.fill = "currentColor";
 
-    // アイコンSVG作成 (Material Design Icons: more_horiz / close)
-    const iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    iconSvg.setAttribute("viewBox", "0 0 24 24");
-    iconSvg.setAttribute("height", "1em");
-    iconSvg.setAttribute("width", "1em");
-    iconSvg.style.fill = "currentColor";
+    const csvPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    csvPath.setAttribute("d", csvDownloadIcon.path);
+    csvSvg.appendChild(csvPath);
+    csvBtn.appendChild(csvSvg);
 
-    const iconPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    iconPath.setAttribute("d", state.isExpanded ? closePath : morePath);
-    detailsBtn.classList.toggle("active", state.isExpanded);
-    iconSvg.appendChild(iconPath);
-    detailsBtn.appendChild(iconSvg);
-
-    detailsBtn.addEventListener("click", () => {
-        state.isExpanded = !state.isExpanded;
-        detailsBtn.classList.toggle("active", state.isExpanded);
-        iconPath.setAttribute("d", state.isExpanded ? closePath : morePath);
-
-        let delay = 0;
-        otherGroups.forEach((group) => {
-            group.classList.toggle("modebar-group--hidden", !state.isExpanded);
-            group.classList.toggle("modebar-group--expanded", state.isExpanded);
-
-            group.querySelectorAll("button").forEach((btn) => {
-                if (state.isExpanded) {
-                    btn.style.animationDelay = `${delay}ms`;
-                    delay += 60;
-                } else {
-                    btn.style.animationDelay = "";
-                }
-            });
-        });
+    csvBtn.addEventListener("click", () => {
+        downloadCsv(plotDiv);
     });
 
-    detailsGroup.appendChild(detailsBtn);
-    downloadGroup.after(detailsGroup);
+    if (downloadBtn) {
+        downloadBtn.after(csvBtn);
+    } else {
+        downloadGroup.appendChild(csvBtn);
+    }
+
+    // 最初のグループ（画像保存 + CSV）以外のボタン群は使わないため非表示にする
+    Array.from(groups)
+        .slice(1)
+        .forEach((group) => {
+            group.classList.add("modebar-group--hidden");
+        });
+
+    // モードバー内の操作を親要素へ伝播させない。
+    // グラフが「クリックで拡大表示」のようなクリック領域に包まれていても、
+    // ボタン操作（画像保存・CSVなど）だけで親側の動作がトリガーされないようにする。
+    // Enter/Space はボタン押下のためのキーなので同様に止める（Escape 等は通す）。
+    if (!modebar.dataset.quelmapClickContained) {
+        modebar.dataset.quelmapClickContained = "true";
+        modebar.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+        modebar.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+            }
+        });
+    }
+
+    attachModebarTooltips(modebar);
 }
