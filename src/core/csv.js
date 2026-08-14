@@ -66,9 +66,29 @@ export function tracesToCsv(traces) {
     return lines.join("\r\n");
 }
 
+// ユーザー指定の layout からグラフタイトルを取り出す。無ければ null。
+// （_fullLayout はタイトル未指定時に編集モード用のプレースホルダー文字列を
+// 持つことがあるため参照しない）
+function plotTitleText(plotDiv) {
+    const raw = plotDiv.layout && plotDiv.layout.title;
+    const text = typeof raw === "string" ? raw : raw && raw.text;
+    return typeof text === "string" && text.trim() ? text.trim() : null;
+}
+
+/**
+ * ダウンロードさせるCSVのファイル名（"[グラフタイトル]-data.csv"）を返す。
+ * タイトルが無い場合は "data.csv"。
+ *
+ * @param {HTMLElement} plotDiv Plotly のグラフ div（.js-plotly-plot 要素）
+ */
+export function csvFilename(plotDiv) {
+    const title = plotTitleText(plotDiv);
+    if (!title) return "data.csv";
+    return `${title.replace(/[\\/:*?"<>|]/g, "_")}-data.csv`;
+}
+
 /**
  * グラフのデータをCSVファイルとしてダウンロードさせる。
- * ファイル名はグラフタイトルがあればそれを、無ければ "quelmap-data" を使う。
  *
  * @param {HTMLElement} plotDiv Plotly のグラフ div（.js-plotly-plot 要素）
  */
@@ -76,13 +96,7 @@ export function downloadCsv(plotDiv) {
     const csv = tracesToCsv(plotDiv && plotDiv.data);
     if (csv === null) return;
 
-    const rawTitle = plotDiv.layout && plotDiv.layout.title;
-    const titleText =
-        typeof rawTitle === "string" ? rawTitle : rawTitle && rawTitle.text;
-    const filename =
-        (typeof titleText === "string" && titleText.trim()
-            ? titleText.trim().replace(/[\\/:*?"<>|]/g, "_")
-            : "quelmap-data") + ".csv";
+    const filename = csvFilename(plotDiv);
 
     // BOM付きにしてExcelでの文字化けを防ぐ
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
