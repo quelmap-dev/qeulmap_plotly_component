@@ -77,14 +77,14 @@ function plotTitleText(plotDiv) {
 
 /**
  * ダウンロードさせるCSVのファイル名（"[グラフタイトル]-data.csv"）を返す。
- * タイトルが無い場合は "quelmap-data.csv"。
+ * タイトルが無い場合は "data.csv"。
  *
  * @param {HTMLElement} plotDiv Plotly のグラフ div（.js-plotly-plot 要素）
  */
 export function csvFilename(plotDiv) {
     const title = plotTitleText(plotDiv);
-    const base = title ? title.replace(/[\\/:*?"<>|]/g, "_") : "quelmap";
-    return `${base}-data.csv`;
+    if (!title) return "data.csv";
+    return `${title.replace(/[\\/:*?"<>|]/g, "_")}-data.csv`;
 }
 
 /**
