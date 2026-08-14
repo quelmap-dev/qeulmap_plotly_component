@@ -50,9 +50,17 @@ export function attachModebarTooltips(modebar) {
 
         // ボタンの真上・中央（transform で -50% / -100% 補正）
         const rect = btn.getBoundingClientRect();
-        tooltip.style.left = `${rect.left + rect.width / 2}px`;
         tooltip.style.top = `${rect.top - 6}px`;
         document.body.appendChild(tooltip);
+
+        // 画面右端のボタンなどで見切れないよう、中央位置をビューポート内にクランプする
+        const margin = 8;
+        const half = tooltip.offsetWidth / 2;
+        const centerX = Math.min(
+            Math.max(rect.left + rect.width / 2, margin + half),
+            window.innerWidth - margin - half
+        );
+        tooltip.style.left = `${centerX}px`;
     };
 
     modebar.addEventListener("mouseover", (e) => {
