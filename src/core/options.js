@@ -1,5 +1,4 @@
 // layout / config のデフォルトをマージするヘルパー（React版・vanilla版で共有）
-import { refreshIcon } from "./icons.js";
 
 /**
  * Plotly に渡す layout を生成する。
@@ -26,27 +25,14 @@ export function buildLayout(layout = {}, fallbackHeight) {
 
 /**
  * Plotly に渡す config を生成する。
- * ロゴ非表示・レスポンシブを有効化し、「ビューのリセット」ボタンを追加する。
+ * ロゴ非表示・レスポンシブを有効化する。
  *
- * @param {object} config           ユーザー指定の config
- * @param {object} [handlers]
- * @param {Function} [handlers.onReset] リセットボタン押下時に呼ばれるコールバック
+ * @param {object} config ユーザー指定の config
  */
-export function buildConfig(config = {}, { onReset } = {}) {
+export function buildConfig(config = {}) {
     return {
         displaylogo: false,
         responsive: true,
         ...config,
-        modeBarButtonsToAdd: [
-            ...(config.modeBarButtonsToAdd || []),
-            {
-                name: "component_reload",
-                title: "Reset View",
-                icon: refreshIcon,
-                click: () => {
-                    if (onReset) onReset();
-                },
-            },
-        ],
     };
 }

@@ -14,17 +14,9 @@ import { setupTooltip } from "./core/tooltip.js";
  */
 export default function QuelmapPlot({ layout = {}, config = {}, data, onInitialized, onUpdate, ...props }) {
     const tooltipRef = useRef(null);
-    const modebarStateRef = useRef({ isExpanded: false });
-    const [plotKey, setPlotKey] = useState(0);
 
     const containerRef = useRef(null);
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-
-    // data/layout が変わるたびにインクリメントし、Plotly に再描画を明示指示
-    const [revision, setRevision] = useState(0);
-    useEffect(() => {
-        setRevision(prev => prev + 1);
-    }, [data, layout]);
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -55,15 +47,11 @@ export default function QuelmapPlot({ layout = {}, config = {}, data, onInitiali
         [layout, containerSize.height]
     );
 
-    const internalConfig = useMemo(
-        () => buildConfig(config, { onReset: () => setPlotKey(prev => prev + 1) }),
-        [config]
-    );
+    const internalConfig = useMemo(() => buildConfig(config), [config]);
 
     const handleInitialized = (figure, plotDiv) => {
         // 1. モードバーのカスタマイズ
-        modebarStateRef.current.isExpanded = false;
-        customizeModebar(plotDiv, modebarStateRef.current);
+        customizeModebar(plotDiv);
 
         // 2. カスタムツールチップの作成（前回分があれば切断してから作り直す）
         if (tooltipRef.current) {
@@ -77,7 +65,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, data, onInitiali
     };
 
     const handleUpdate = (figure, plotDiv) => {
-        customizeModebar(plotDiv, modebarStateRef.current);
+        customizeModebar(plotDiv);
         if (onUpdate) {
             onUpdate(figure, plotDiv);
         }
@@ -90,11 +78,9 @@ export default function QuelmapPlot({ layout = {}, config = {}, data, onInitiali
         >
             {ready &&
                 <Plot
-                    key={plotKey}
                     data={data}
                     layout={mergedLayout}
                     config={internalConfig}
-                    revision={revision}
                     className="quelmap-plot-wrapper"
                     useResizeHandler={true}
                     style={{ width: "100%", height: "100%" }}
