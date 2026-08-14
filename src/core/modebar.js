@@ -78,5 +78,21 @@ export function customizeModebar(plotDiv) {
             group.classList.add("modebar-group--hidden");
         });
 
+    // モードバー内の操作を親要素へ伝播させない。
+    // グラフが「クリックで拡大表示」のようなクリック領域に包まれていても、
+    // ボタン操作（画像保存・CSVなど）だけで親側の動作がトリガーされないようにする。
+    // Enter/Space はボタン押下のためのキーなので同様に止める（Escape 等は通す）。
+    if (!modebar.dataset.quelmapClickContained) {
+        modebar.dataset.quelmapClickContained = "true";
+        modebar.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
+        modebar.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.stopPropagation();
+            }
+        });
+    }
+
     attachModebarTooltips(modebar);
 }
