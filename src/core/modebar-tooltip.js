@@ -42,6 +42,12 @@ export function attachModebarTooltips(modebar) {
         tooltip.className = TOOLTIP_CLASS;
         tooltip.textContent = title;
 
+        // ダークモードのスコープ（.dark）がグラフ側にのみ付いている場合でも
+        // body 直下のツールチップに配色が届くよう、クラスを引き継ぐ
+        if (btn.closest(".dark")) {
+            tooltip.classList.add("dark");
+        }
+
         // ボタンの真上・中央（transform で -50% / -100% 補正）
         const rect = btn.getBoundingClientRect();
         tooltip.style.left = `${rect.left + rect.width / 2}px`;
