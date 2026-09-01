@@ -2,9 +2,9 @@
 // Plotly 標準のツールチップは CSS 疑似要素（::before / ::after）でボタンからの
 // 相対配置のため、祖先要素の overflow: hidden で切れてしまう。
 // 代わりに document.body 直下へ position: fixed で描画し、クリッピングの影響を受けないようにする。
-// （疑似要素側は quelmap-plotly.css で非表示にしている）
+// （疑似要素側は plotly-neo.css で非表示にしている）
 
-const TOOLTIP_CLASS = "quelmap-modebar-tooltip";
+const TOOLTIP_CLASS = "plotly-neo-modebar-tooltip";
 
 function removeAllTooltips() {
     document.querySelectorAll(`.${TOOLTIP_CLASS}`).forEach((el) => el.remove());
@@ -18,8 +18,8 @@ function removeAllTooltips() {
  * @param {HTMLElement} modebar モードバー要素（.modebar）
  */
 export function attachModebarTooltips(modebar) {
-    if (modebar.dataset.quelmapTooltipBound) return;
-    modebar.dataset.quelmapTooltipBound = "true";
+    if (modebar.dataset.plotlyNeoTooltipBound) return;
+    modebar.dataset.plotlyNeoTooltipBound = "true";
 
     // 旧モードバーが残したツールチップがあれば掃除する
     removeAllTooltips();

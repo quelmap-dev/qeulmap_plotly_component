@@ -11,8 +11,8 @@ node_modules
 # dist はビルド生成物のため基本は無視するが、
 # CDN(GitHub 直配信 / jsDelivr @gh)用の UMD バンドルだけはコミットする
 dist/*
-!dist/quelmap-plotly.umd.js
-!dist/quelmap-plotly.css
+!dist/plotly-neo.umd.js
+!dist/plotly-neo.css
 dist-ssr
 *.local
 

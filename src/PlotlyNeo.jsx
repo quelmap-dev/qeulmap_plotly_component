@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useMemo } from "react";
 import Plot from "react-plotly.js";
-import "./quelmap-plotly.css";
+import "./plotly-neo.css";
 import { buildLayout, buildConfig } from "./core/options.js";
 import { customizeModebar } from "./core/modebar.js";
 import { setupTooltip } from "./core/tooltip.js";
@@ -12,7 +12,7 @@ import { setupTooltip } from "./core/tooltip.js";
  * 共通のカスタマイズ処理（モードバー / ツールチップ / layout・config の既定値）は
  * src/core 以下に切り出しており、素のJS版（src/standalone.js）と共有しています。
  */
-export default function QuelmapPlot({ layout = {}, config = {}, data, onInitialized, onUpdate, ...props }) {
+export default function PlotlyNeo({ layout = {}, config = {}, data, onInitialized, onUpdate, ...props }) {
     const tooltipRef = useRef(null);
 
     const containerRef = useRef(null);
@@ -81,7 +81,7 @@ export default function QuelmapPlot({ layout = {}, config = {}, data, onInitiali
                     data={data}
                     layout={mergedLayout}
                     config={internalConfig}
-                    className="quelmap-plot-wrapper"
+                    className="plotly-neo-wrapper"
                     useResizeHandler={true}
                     style={{ width: "100%", height: "100%" }}
                     onInitialized={handleInitialized}

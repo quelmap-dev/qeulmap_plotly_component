@@ -1,6 +1,6 @@
 // src/App.jsx
 import BarChart from "./BarChart";
-import "./quelmap-plotly.css";
+import "./plotly-neo.css";
 
 export default function App() {
   return (
