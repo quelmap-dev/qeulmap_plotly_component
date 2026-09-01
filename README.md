@@ -7,9 +7,9 @@ A drop-in wrapper for [Plotly.js](https://plotly.com/javascript/) that restyles 
 
 日本語版は [README.ja.md](./README.ja.md) をご覧ください。
 
-![Grouped bar chart rendered with Plotly Neo, showing the restyled hover tooltip and the trimmed-down modebar](docs/preview-bar.png)
+![Grouped bar chart rendered with Plotly Neo, showing the restyled hover tooltip and the trimmed-down modebar](docs/preview-bar.gif)
 
-![Choropleth world map rendered with Plotly Neo](docs/preview-map.png)
+![Choropleth world map rendered with Plotly Neo](docs/preview-map.gif)
 
 ## What is Plotly Neo?
 

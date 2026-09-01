@@ -7,9 +7,9 @@ Plotly.js のグラフを、洗練されたホバーツールチップ・整理�
 
 English version: [README.md](./README.md)
 
-![Plotly Neo で描画したグループ棒グラフ（カスタムホバーツールチップと整理されたモードバー）](docs/preview-bar.png)
+![Plotly Neo で描画したグループ棒グラフ（カスタムホバーツールチップと整理されたモードバー）](docs/preview-bar.gif)
 
-![Plotly Neo で描画したコロプレスマップ](docs/preview-map.png)
+![Plotly Neo で描画したコロプレスマップ](docs/preview-map.gif)
 
 ## 特徴
 
