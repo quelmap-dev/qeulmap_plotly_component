@@ -4,21 +4,20 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>quelmap-plotly — CDN / 素のHTML サンプル</title>
+    <title>Plotly Neo — CDN / 素のHTML サンプル</title>
 
     <!-- 1) Plotly.js 本体（本家CDNから読み込む） -->
     <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script>
 
-    <!-- 2) quelmap-plotly の CSS と UMD スクリプト -->
+    <!-- 2) Plotly Neo の CSS と UMD スクリプト -->
     <!--
-      npm 未公開でも、jsDelivr の GitHub 直配信で利用できます（@main はタグや commit に変更可）:
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.css">
-        <script src="https://cdn.jsdelivr.net/gh/quelmap-dev/qeulmap_plotly_component@main/dist/quelmap-plotly.umd.js"></script>
-      ※ スラッシュを含むブランチ名（claude/... 等）は @gh で解釈されないため、commit ハッシュかタグを指定してください。
+      npm 公開版は jsDelivr から利用できます（バージョンは @0.2.1 のように固定も可）:
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plotly-neo/dist/plotly-neo.css">
+        <script src="https://cdn.jsdelivr.net/npm/plotly-neo/dist/plotly-neo.umd.js"></script>
       このファイルはローカルの dist を参照しています（先に `npm run build:standalone` を実行してください）。
     -->
-    <link rel="stylesheet" href="../dist/quelmap-plotly.css" />
-    <script src="../dist/quelmap-plotly.umd.js"></script>
+    <link rel="stylesheet" href="../dist/plotly-neo.css" />
+    <script src="../dist/plotly-neo.umd.js"></script>
 
     <style>
         body {
@@ -63,11 +62,11 @@
 </head>
 
 <body>
-    <h1>quelmap-plotly — React 不要・CDN で Plotly.js と同じように使う</h1>
+    <h1>Plotly Neo — React 不要・CDN で Plotly.js と同じように使う</h1>
 
     <div class="row">
         <strong>データ切替テスト:</strong>
-        <button id="toggle">データを切り替える（QuelmapPlot.react）</button>
+        <button id="toggle">データを切り替える（PlotlyNeo.react）</button>
     </div>
 
     <!-- 2D 棒グラフ -->
@@ -90,13 +89,13 @@
         ];
 
         // Plotly.newPlot とほぼ同じシグネチャ: (div または id, data, layout, config)
-        QuelmapPlot.newPlot('barChart', dataA, { title: { text: '動物園データ' } });
+        PlotlyNeo.newPlot('barChart', dataA, { title: { text: '動物園データ' } });
 
         // react() で差分更新（Plotly.react 相当）
         let useAlt = false;
         document.getElementById('toggle').addEventListener('click', () => {
             useAlt = !useAlt;
-            QuelmapPlot.react('barChart', useAlt ? dataB : dataA, {
+            PlotlyNeo.react('barChart', useAlt ? dataB : dataA, {
                 title: { text: useAlt ? '動物園データ（拡張版）' : '動物園データ' },
             });
         });
@@ -111,7 +110,7 @@
             z.push(i);
             c.push(i);
         }
-        QuelmapPlot.newPlot('scatter3d', [{
+        PlotlyNeo.newPlot('scatter3d', [{
             x, y, z, type: 'scatter3d', mode: 'markers',
             marker: { size: 6, color: c, colorscale: 'Viridis' },
         }], { title: { text: '3D Scatter' } });

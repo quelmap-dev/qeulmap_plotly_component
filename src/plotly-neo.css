@@ -3,27 +3,27 @@
  * ============================================ */
 
 /* Dark Mode */
-.quelmap-plot-wrapper .dark .plot-container,
-.dark .quelmap-plot-wrapper .plot-container {
+.plotly-neo-wrapper .dark .plot-container,
+.dark .plotly-neo-wrapper .plot-container {
 	filter: invert(85%) hue-rotate(180deg);
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly g.hoverlayer {
+.plotly-neo-wrapper.js-plotly-plot .plotly g.hoverlayer {
     display: none !important;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .gl-container #scene svg g.hovertext {
+.plotly-neo-wrapper.js-plotly-plot .plotly .gl-container #scene svg g.hovertext {
     display: none !important;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .gl-container #scene {
+.plotly-neo-wrapper.js-plotly-plot .plotly .gl-container #scene {
     width: 100% !important;
     height: 100% !important;
     left: 0 !important;
     top: 0 !important;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip {
+.plotly-neo-wrapper.js-plotly-plot .plotly .custom-tooltip {
     position: absolute;
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
     border-radius: 0.5rem;
@@ -37,12 +37,12 @@
     background-color: #f7f7f7;
 }
 
-.dark .quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip {
+.dark .plotly-neo-wrapper.js-plotly-plot .plotly .custom-tooltip {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .custom-tooltip::before {
+.plotly-neo-wrapper.js-plotly-plot .plotly .custom-tooltip::before {
     content: '';
     position: absolute;
     left: 7px;
@@ -53,12 +53,12 @@
     border-radius: 999px;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar-container {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar-container {
     height: 100% !important;
     pointer-events: none !important;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar {
     top: auto !important;
     bottom: 7px !important;
     right: 7px !important;
@@ -67,25 +67,25 @@
     justify-content: flex-end;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-group button {
     margin-right: 7px;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button svg {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-group button svg {
     scale: 1.4;
     transition: scale 0.2s;
 }
 
 /* メニューアイコンのツールチップ
    Plotly 標準の CSS 疑似要素ツールチップは祖先の overflow: hidden で切れてしまうため無効化し、
-   JS で body 直下に固定配置で描画する（.quelmap-modebar-tooltip / src/core/modebar-tooltip.js） */
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::before,
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::after {
+   JS で body 直下に固定配置で描画する（.plotly-neo-modebar-tooltip / src/core/modebar-tooltip.js） */
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::before,
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-btn::after {
     display: none !important;
 }
 
 /* プロットのホバー要素（.custom-tooltip）とスタイルを合わせる */
-.quelmap-modebar-tooltip {
+.plotly-neo-modebar-tooltip {
     position: fixed;
     z-index: 10010;
     transform: translate(-50%, -100%);
@@ -99,21 +99,21 @@
     white-space: nowrap;
     pointer-events: none;
     opacity: 0;
-    animation: quelmapTooltipIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: plotlyNeoTooltipIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* ダークモード: .custom-tooltip は invert フィルタ内にあるため自動で暗くなるが、
    このツールチップは body 直下でフィルタが効かないため、フィルタ適用後の見た目
    （#f7f7f7 → 約#2c2c2c / black → 約#d9d9d9）を明示的に指定する。
    .dark が body より内側のスコープの場合は JS が .dark クラスを直接付与する */
-.dark .quelmap-modebar-tooltip,
-.quelmap-modebar-tooltip.dark {
+.dark .plotly-neo-modebar-tooltip,
+.plotly-neo-modebar-tooltip.dark {
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     background-color: #2c2c2c;
     color: #d9d9d9;
 }
 
-@keyframes quelmapTooltipIn {
+@keyframes plotlyNeoTooltipIn {
     0% {
         opacity: 0;
         transform: translate(-50%, calc(-100% + 8px));
@@ -125,18 +125,18 @@
     }
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group button:hover svg {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-group button:hover svg {
     scale: 1.5;
 }
 
 
 /* 非表示のボタン群（ズーム・パン・投げ縄など、画像保存・CSV以外） */
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-group.modebar-group--hidden {
     display: none;
 }
 
 /* CSVダウンロードボタンのスタイル */
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv {
     cursor: pointer;
     background: transparent;
     border: none;
@@ -147,12 +147,12 @@
     justify-content: center;
 }
 
-.quelmap-plot-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv:hover {
+.plotly-neo-wrapper.js-plotly-plot .plotly .modebar .modebar-btn--csv:hover {
     color: #555;
 }
 
 /* Overlay for the maximized mode */
-.quelmap-plot-overlay {
+.plotly-neo-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -166,13 +166,13 @@
     backdrop-filter: blur(2px);
 }
 
-.quelmap-plot-overlay.active {
+.plotly-neo-overlay.active {
     opacity: 1;
     pointer-events: auto;
 }
 
 /* Base style for the plot container to allow transitions */
-.js-plotly-plot.quelmap-plot {
+.js-plotly-plot.plotly-neo-plot {
     transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -180,7 +180,7 @@
 }
 
 /* Maximized state */
-.js-plotly-plot.quelmap-plot.maximized {
+.js-plotly-plot.plotly-neo-plot.maximized {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -193,17 +193,17 @@
     background: white;
 }
 
-.dark .js-plotly-plot.quelmap-plot.maximized {
+.dark .js-plotly-plot.plotly-neo-plot.maximized {
     background: #1a1a1a;
 }
 
 /* Ensure the SVG background adapts if transparent */
-.js-plotly-plot.quelmap-plot.maximized .main-svg {
+.js-plotly-plot.plotly-neo-plot.maximized .main-svg {
     border-radius: 8px;
     /* If original chart is transparent, give it a background in modal mode */
     background-color: var(--plot-bg-color, white) !important;
 }
-.dark .js-plotly-plot.quelmap-plot.maximized .main-svg {
+.dark .js-plotly-plot.plotly-neo-plot.maximized .main-svg {
     background-color: var(--plot-bg-color, #1a1a1a) !important;
 }
 
@@ -234,7 +234,7 @@
 }
 
 /* Wrapper for framer-motion layout animation */
-.quelmap-plot-wrapper.js-plotly-plot {
+.plotly-neo-wrapper.js-plotly-plot {
     width: 100% !important;
     height: 100% !important;
 }

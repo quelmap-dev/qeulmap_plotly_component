@@ -1,18 +1,18 @@
 // =============================================================
-// quelmap-plotly — 素のHTML / vanilla JS 向けエントリ
+// plotly-neo — 素のHTML / vanilla JS 向けエントリ
 //
 // React なしで、CDN から読み込んだ Plotly.js（window.Plotly）を使って
 // Plotly.js と同じ感覚で利用できる命令的 API を公開します。
 //
 //   <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
-//   <script src=".../quelmap-plotly.umd.js"></script>
-//   <link rel="stylesheet" href=".../quelmap-plotly.css">
+//   <script src=".../plotly-neo.umd.js"></script>
+//   <link rel="stylesheet" href=".../plotly-neo.css">
 //   <div id="myDiv"></div>
 //   <script>
-//     QuelmapPlot.newPlot('myDiv', data, layout, config);
+//     PlotlyNeo.newPlot('myDiv', data, layout, config);
 //   </script>
 // =============================================================
-import "./quelmap-plotly.css";
+import "./plotly-neo.css";
 import { buildLayout, buildConfig } from "./core/options.js";
 import { customizeModebar } from "./core/modebar.js";
 import { setupTooltip } from "./core/tooltip.js";
@@ -25,7 +25,7 @@ function getPlotly() {
     const P = typeof window !== "undefined" ? window.Plotly : undefined;
     if (!P) {
         throw new Error(
-            "[quelmap-plotly] Plotly.js が見つかりません。先に Plotly.js を読み込んでください " +
+            "[plotly-neo] Plotly.js が見つかりません。先に Plotly.js を読み込んでください " +
             '(例: <script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>)。'
         );
     }
@@ -36,13 +36,13 @@ function getPlotly() {
 function resolveEl(el) {
     const node = typeof el === "string" ? document.getElementById(el) : el;
     if (!node) {
-        throw new Error("[quelmap-plotly] 対象の要素が見つかりません: " + el);
+        throw new Error("[plotly-neo] 対象の要素が見つかりません: " + el);
     }
     return node;
 }
 
 // コンテナ内に Plotly 用の内部 div を用意する（React版の構造を再現）
-//   container (position:relative / min-height:400px) > inner.quelmap-plot-wrapper(.js-plotly-plot)
+//   container (position:relative / min-height:400px) > inner.plotly-neo-wrapper(.js-plotly-plot)
 function ensureEntry(container) {
     let entry = registry.get(container);
     if (entry) return entry;
@@ -51,7 +51,7 @@ function ensureEntry(container) {
     if (!container.style.minHeight) container.style.minHeight = "400px";
 
     const inner = document.createElement("div");
-    inner.className = "quelmap-plot-wrapper";
+    inner.className = "plotly-neo-wrapper";
     container.appendChild(inner);
 
     entry = {

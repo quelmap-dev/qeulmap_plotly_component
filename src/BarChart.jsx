@@ -1,6 +1,6 @@
 // src/BarChart.jsx
 import { useState } from "react";
-import QuelmapPlot from "./QuelmapPlot";
+import PlotlyNeo from "./PlotlyNeo";
 import Plot from "react-plotly.js";
 
 // --- データセットA（デフォルト） ---
@@ -126,7 +126,7 @@ export default function BarChart() {
             />
             <p>かっこいい版</p>
 
-            <QuelmapPlot
+            <PlotlyNeo
                 data={currentData}
                 layout={currentLayout}
                 config={config}

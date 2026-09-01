@@ -1,24 +1,37 @@
 {
-  "name": "quelmap-plotly",
+  "name": "plotly-neo",
+  "description": "A drop-in restyled charting layer for Plotly.js — refined tooltips and modebar, CSV export, dark mode, works with React or a plain <script> tag.",
+  "license": "MIT",
+  "author": "Shintaro Morimoto",
+  "keywords": [
+    "plotly",
+    "plotly.js",
+    "charts",
+    "charting",
+    "react",
+    "visualization",
+    "dataviz",
+    "umd"
+  ],
   "private": false,
   "version": "0.2.1",
   "type": "module",
   "module": "dist/index.js",
   "types": "src/index.d.ts",
-  "unpkg": "dist/quelmap-plotly.umd.js",
-  "jsdelivr": "dist/quelmap-plotly.umd.js",
+  "unpkg": "dist/plotly-neo.umd.js",
+  "jsdelivr": "dist/plotly-neo.umd.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./src/index.d.ts"
+      "types": "./src/index.d.ts",
+      "import": "./dist/index.js"
     },
-    "./standalone": "./dist/quelmap-plotly.umd.js",
+    "./standalone": "./dist/plotly-neo.umd.js",
     "./style.css": "./dist/index.css"
   },
   "style": "dist/index.css",
   "files": [
     "dist",
-    "src"
+    "src/index.d.ts"
   ],
   "scripts": {
     "dev": "vite",
@@ -36,14 +49,12 @@
     "plotly.js": ">=2",
     "react-plotly.js": ">=2"
   },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.1.18",
-    "tailwindcss": "^4.1.18"
-  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@types/react-plotly.js": "^2.6.3",
     "@vitejs/plugin-react": "^5.1.1",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -53,6 +64,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-plotly.js": "^2.6.0",
+    "tailwindcss": "^4.1.18",
     "vite": "^7.3.1"
   }
 }

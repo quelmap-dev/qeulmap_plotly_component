@@ -1,2 +1,2 @@
-export { default as QuelmapPlot } from "./QuelmapPlot.jsx";
-import "./quelmap-plotly.css";
+export { default as PlotlyNeo } from "./PlotlyNeo.jsx";
+import "./plotly-neo.css";
